@@ -14,6 +14,26 @@ if not os.path.exists(Path.home() / 'TBFlash' / 'collection.xlsx'):
 
 wb = openpyxl.load_workbook(Path.home() / 'TBFlash' / 'collection.xlsx')
 ws = wb.active
+collection = {}
+
+class FlashCard:
+	def __init__(self, front, back):
+		self.front = front
+		self.back = back
+
+	def __str__(self):
+		return str(self.front)
+
+	def __repr__(self):
+		return str(self.front)
+
+	def print_card(self):
+		print('Q:', self.front)
+		print('A:', self.back)
+
+def load_cards():
+	for i in range(2, ws.max_row+1):
+		collection['card_'+str(i)] = FlashCard(ws.cell(row=i, column=1).value, ws.cell(row=i, column=2).value)
 
 def print_menu():
 	print()
@@ -33,7 +53,7 @@ def add_card():
 	ws.cell(row=new_row, column=2).value = answer
 	wb.save(Path.home() / 'TBFlash' / 'collection.xlsx')
 	print()
-
+	load_cards()
 
 def run_quiz():
 	print('QUIZ - ', ws.max_row - 1, 'questions total')
@@ -48,10 +68,11 @@ def show_cards():
 	if ws.max_row <= 1:
 		print('No cards to show.')
 	print()
-	for q in range(2, ws.max_row+1):
-		print('Q: ', ws.cell(row=q, column=1).value)
-		print('A: ', ws.cell(row=q, column=2).value)
-		print()
+	for i in range(2, ws.max_row+1):
+		collection['card_'+str(i)].print_card()
+	print()
+
+load_cards()
 
 print_menu()
 menu_choice = 0
